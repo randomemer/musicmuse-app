@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.musicmuse'
+    namespace 'com.musicmuse.app'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.musicmuse"
+        applicationId "com.musicmuse.app"
         minSdk 24
         targetSdk 32
         versionCode 1
