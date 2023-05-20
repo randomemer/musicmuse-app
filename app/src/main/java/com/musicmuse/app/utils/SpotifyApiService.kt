@@ -25,11 +25,11 @@ public class SpotifyAuthApiService {
     val encodedString = Base64.encodeToString(originalString.toByteArray(), Base64.NO_WRAP)
 
     val headers =
-      mapOf<String, String>(
+      mapOf(
         "Authorization" to "Basic $encodedString",
         "Content-Type" to "application/x-www-form-urlencoded"
       )
-    val form = mapOf<String, String>("grant_type" to "client_credentials")
+    val form = mapOf("grant_type" to "client_credentials")
 
     return api.getAuthToken(headers, form)
   }

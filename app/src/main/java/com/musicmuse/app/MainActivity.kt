@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.musicmuse.app.ui.config.AppTheme
-import com.musicmuse.app.ui.screens.Home
+import com.musicmuse.app.ui.screens.Main
 import com.musicmuse.app.utils.GlobalData
 import com.musicmuse.app.utils.SpotifyAuthApiService
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -24,13 +24,14 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     installSplashScreen()
+    supportActionBar?.hide()
 
     getSpotifyToken()
     auth = Firebase.auth;
 
     setContent {
       AppTheme {
-        Home()
+        Main()
       }
     }
   }

@@ -5,10 +5,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(name = "HomeScreen")
+@Preview(name = "Explore Screen")
 @Composable
-fun Home() {
+fun Explore() {
   Column {
-    Text("Home Screen")
+    Text("Explore Screen")
   }
 }
