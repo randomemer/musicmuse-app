@@ -1,9 +1,6 @@
 package com.musicmuse.app.utils
 
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface SpotifyAuthApi {
   @POST("api/token")
@@ -14,4 +11,9 @@ interface SpotifyAuthApi {
   ): SpotifyTokenResponse
 }
 
-interface SpotifyApi {}
+interface SpotifyApi {
+  @GET("browse/categories")
+  suspend fun getCategories(
+    @Header("Authorization") authorization: String
+  ): SpotifyPaginatedModel<SpotifyCategory>
+}

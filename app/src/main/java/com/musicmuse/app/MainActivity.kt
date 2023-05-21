@@ -26,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     installSplashScreen()
     supportActionBar?.hide()
 
+    GlobalData.put("client_id", getString(R.string.spotify_client_id))
+    GlobalData.put("client_secret", getString(R.string.spotify_client_secret))
+
     getSpotifyToken()
     auth = Firebase.auth;
 
@@ -39,14 +42,12 @@ class MainActivity : AppCompatActivity() {
   @OptIn(DelicateCoroutinesApi::class)
   private fun getSpotifyToken() {
     val content = findViewById<View>(android.R.id.content)
-    val clientId = applicationContext.resources.getString(R.string.spotify_client_id)
-    val clientSecret = applicationContext.resources.getString(R.string.spotify_client_secret)
 
     content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
       override fun onPreDraw(): Boolean {
         GlobalScope.launch {
           try {
-            val resp = SpotifyAuthApiService().getAuthToken(clientId, clientSecret)
+            val resp = SpotifyAuthApiService().getAuthToken()
             println("spotify token : ${resp.accessToken}")
             GlobalData.put("spotify_token", resp.accessToken)
           } catch (e: HttpException) {
