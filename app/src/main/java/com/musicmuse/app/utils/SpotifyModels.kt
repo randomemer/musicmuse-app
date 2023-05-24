@@ -20,7 +20,7 @@ data class SpotifyPaginatedModel<T>(
 
 
 data class SpotifyImage(
-  @Json(name = "href") val href: String,
+  @Json(name = "url") val href: String,
   @Json(name = "height") val height: Int?,
   @Json(name = "width") val width: Int?,
 )
@@ -32,3 +32,6 @@ data class SpotifyCategory(
   @Json(name = "name") val name: String,
 )
 
+data class SpotifyCategoriesResponse(
+  @Json(name = "categories") val categories: SpotifyPaginatedModel<SpotifyCategory>
+)

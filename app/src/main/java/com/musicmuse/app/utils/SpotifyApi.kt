@@ -13,7 +13,5 @@ interface SpotifyAuthApi {
 
 interface SpotifyApi {
   @GET("browse/categories")
-  suspend fun getCategories(
-    @Header("Authorization") authorization: String
-  ): SpotifyPaginatedModel<SpotifyCategory>
+  suspend fun getCategories(): SpotifyCategoriesResponse
 }

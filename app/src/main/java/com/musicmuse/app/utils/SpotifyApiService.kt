@@ -44,7 +44,7 @@ class SpotifyApiInterceptor : Interceptor {
   override fun intercept(chain: Interceptor.Chain): Response = chain.run {
     val token = GlobalData.get("spotify_token")
     proceed(
-      request().newBuilder().addHeader("Authorization", "Basic $token").build()
+      request().newBuilder().addHeader("Authorization", "Bearer $token").build()
     )
   }
 }
@@ -56,7 +56,7 @@ class SpotifyApiAuthenticator : Authenticator {
     runBlocking {
       val tokenResp = SpotifyAuthApiService().getAuthToken()
       GlobalData.put("spotify_token", tokenResp.accessToken)
-      newRequest = response.request().newBuilder().header("Authorization", "Bearer ${tokenResp.accessToken}").build()
+      newRequest = response.request.newBuilder().header("Authorization", "Bearer ${tokenResp.accessToken}").build()
     }
 
     return newRequest
@@ -64,9 +64,11 @@ class SpotifyApiAuthenticator : Authenticator {
 }
 
 class SpotifyApiService {
-  private val api: SpotifyApi by lazy {
+  private val _api: SpotifyApi by lazy {
     createSpotifyApi()
   }
+
+  val api: SpotifyApi get() = _api
 
   private fun createSpotifyApi(): SpotifyApi {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -74,7 +76,7 @@ class SpotifyApiService {
     val client =
       OkHttpClient.Builder().addInterceptor(SpotifyApiInterceptor()).authenticator(SpotifyApiAuthenticator()).build()
 
-    val retrofit = Retrofit.Builder().baseUrl("https://api.spotify.com/v1").client(client)
+    val retrofit = Retrofit.Builder().baseUrl("https://api.spotify.com/v1/").client(client)
       .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
 
     return retrofit.create(SpotifyApi::class.java)
