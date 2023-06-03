@@ -2,18 +2,20 @@
 
 package com.musicmuse.app.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -58,18 +60,43 @@ fun Explore(viewModel: ExploreViewModel) {
   val categories = viewModel.categories?.items
 
   if (viewModel.errorMessage.isEmpty() && categories != null) {
-    Column(Modifier.padding(24.dp).fillMaxSize()) {
-      Text("Explore", fontSize = 24.sp, fontWeight = FontWeight.Medium)
-      TextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = searchValue,
-        placeholder = { Text("Search") },
-        shape = RoundedCornerShape(100),
-        onValueChange = { searchValue = it }
-      )
-      LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
+    Column(Modifier.fillMaxSize()) {
+      Box {
+        Column(
+          Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+          Text("Explore", fontSize = 24.sp, fontWeight = FontWeight.Medium)
+          TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = searchValue,
+            placeholder = { Text("Search") },
+            shape = RoundedCornerShape(100),
+            onValueChange = { searchValue = it },
+            colors = TextFieldDefaults.textFieldColors(
+              focusedIndicatorColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Transparent,
+              disabledIndicatorColor = Color.Transparent
+            )
+          )
+        }
+      }
+
+      LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 156.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        horizontalArrangement = Arrangement.spacedBy(18.dp),
+        contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp, bottom = 36.dp)
+      ) {
         items(categories, itemContent = {
-          AsyncImage(model = it.icons[0].href, contentDescription = null)
+          Card(
+            elevation = 3.dp,
+            shape = RoundedCornerShape(5.dp),
+            modifier = Modifier.clickable(true, onClick = {
+              println("clicked ${it.name}")
+            })
+          ) {
+            AsyncImage(model = it.icons[0].href, contentDescription = null, contentScale = ContentScale.Crop)
+          }
         })
       }
     }
