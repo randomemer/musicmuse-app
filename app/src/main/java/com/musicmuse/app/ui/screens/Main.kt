@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.musicmuse.app.ui.components.BottomNav
-import com.musicmuse.app.ui.components.NavigationHost
 import com.musicmuse.app.ui.config.AppTheme
+import com.musicmuse.app.ui.nav.NavigationHost
 
 @Preview(name = "HomeScreen")
 @Composable

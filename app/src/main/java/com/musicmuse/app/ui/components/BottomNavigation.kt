@@ -11,10 +11,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.musicmuse.app.ui.config.primary
+import com.musicmuse.app.ui.nav.NavigationItem
 
 @Composable
 fun BottomNav(navController: NavController) {
-  val items = listOf(NavigationItem.Home, NavigationItem.History, NavigationItem.Profile)
+  val items = listOf(NavigationItem.Home, NavigationItem.Explore, NavigationItem.Profile)
 
   BottomNavigation {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -26,7 +27,7 @@ fun BottomNav(navController: NavController) {
         alwaysShowLabel = false,
         selectedContentColor = primary,
         unselectedContentColor = Color.White.copy(0.4f),
-        selected = currentRoute == item.route,
+        selected = currentRoute?.startsWith(item.route) == true,
         onClick = {
           navController.navigate(item.route) {
             // Pop up to the start destination of the graph to
@@ -35,6 +36,7 @@ fun BottomNav(navController: NavController) {
             navController.graph.startDestinationRoute?.let { route ->
               popUpTo(route) {
                 saveState = true
+                inclusive = true
               }
             }
             // Avoid multiple copies of the same destination when
