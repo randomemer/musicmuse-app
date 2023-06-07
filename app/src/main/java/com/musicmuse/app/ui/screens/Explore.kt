@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,11 +16,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.musicmuse.app.utils.GlobalData
 import com.musicmuse.app.utils.SpotifyApiService
 import com.musicmuse.app.utils.SpotifyCategory
 import com.musicmuse.app.utils.SpotifyPaginatedModel
@@ -68,7 +65,11 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
           Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
           verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-          Text("Explore", fontSize = 24.sp, fontWeight = FontWeight.Medium)
+          Text(
+            "Explore",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold
+          )
           TextField(
             modifier = Modifier.fillMaxWidth(),
             value = searchValue,
@@ -95,12 +96,12 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
           bottom = 36.dp
         )
       ) {
-        items(categories, itemContent = {
+        items(categories) {
           Card(
             elevation = 3.dp,
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier.clickable(true, onClick = {
-              println("clicked ${it.name}")
+              GlobalData.put(it.id, it)
               navController.navigate("explore_category/${it.id}")
             })
           ) {
@@ -110,7 +111,7 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
               contentScale = ContentScale.Crop
             )
           }
-        })
+        }
       }
     }
   } else {

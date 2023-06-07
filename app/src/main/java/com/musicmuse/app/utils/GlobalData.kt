@@ -1,13 +1,13 @@
 package com.musicmuse.app.utils
 
 object GlobalData {
-  private val map = mutableMapOf<String, String>()
+  private val map = mutableMapOf<String, Any>()
 
-  fun get(key: String): String? {
-    return map[key]
+  fun <T : Any> get(key: String): T {
+    return map[key] as T
   }
 
-  fun put(key: String, value: String) {
+  fun <T : Any> put(key: String, value: T) {
     map[key] = value
   }
 }

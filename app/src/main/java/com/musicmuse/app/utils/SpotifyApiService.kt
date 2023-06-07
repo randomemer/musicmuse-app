@@ -23,11 +23,12 @@ class SpotifyAuthApiService {
   }
 
   suspend fun getAuthToken(): SpotifyTokenResponse {
-    val clientId = GlobalData.get("client_id")!!
-    val clientSecret = GlobalData.get("client_secret")!!
+    val clientId = GlobalData.get<String>("client_id")
+    val clientSecret = GlobalData.get<String>("client_secret")
 
     val originalString = "$clientId:$clientSecret"
-    val encodedString = Base64.encodeToString(originalString.toByteArray(), Base64.NO_WRAP)
+    val encodedString =
+      Base64.encodeToString(originalString.toByteArray(), Base64.NO_WRAP)
 
     val headers =
       mapOf(
@@ -42,7 +43,7 @@ class SpotifyAuthApiService {
 
 class SpotifyApiInterceptor : Interceptor {
   override fun intercept(chain: Interceptor.Chain): Response = chain.run {
-    val token = GlobalData.get("spotify_token")
+    val token = GlobalData.get<String>("spotify_token")
     proceed(
       request().newBuilder().addHeader("Authorization", "Bearer $token").build()
     )
@@ -56,7 +57,8 @@ class SpotifyApiAuthenticator : Authenticator {
     runBlocking {
       val tokenResp = SpotifyAuthApiService().getAuthToken()
       GlobalData.put("spotify_token", tokenResp.accessToken)
-      newRequest = response.request.newBuilder().header("Authorization", "Bearer ${tokenResp.accessToken}").build()
+      newRequest = response.request.newBuilder()
+        .header("Authorization", "Bearer ${tokenResp.accessToken}").build()
     }
 
     return newRequest
@@ -74,10 +76,12 @@ class SpotifyApiService {
     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
     val client =
-      OkHttpClient.Builder().addInterceptor(SpotifyApiInterceptor()).authenticator(SpotifyApiAuthenticator()).build()
+      OkHttpClient.Builder().addInterceptor(SpotifyApiInterceptor())
+        .authenticator(SpotifyApiAuthenticator()).build()
 
-    val retrofit = Retrofit.Builder().baseUrl("https://api.spotify.com/v1/").client(client)
-      .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
+    val retrofit =
+      Retrofit.Builder().baseUrl("https://api.spotify.com/v1/").client(client)
+        .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
 
     return retrofit.create(SpotifyApi::class.java)
   }

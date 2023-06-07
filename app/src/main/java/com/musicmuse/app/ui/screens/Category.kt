@@ -2,17 +2,24 @@
 
 package com.musicmuse.app.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.musicmuse.app.utils.SpotifyApiService
-import com.musicmuse.app.utils.SpotifyPaginatedModel
-import com.musicmuse.app.utils.SpotifySimplifiedPlaylist
+import coil.compose.AsyncImage
+import com.musicmuse.app.utils.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -22,6 +29,8 @@ class CategoryViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
   private val _playlists =
     mutableStateOf<SpotifyPaginatedModel<SpotifySimplifiedPlaylist>?>(null)
+  val category get() = GlobalData.get<SpotifyCategory>(categoryId)
+
 
   var errorMessage: String by mutableStateOf("")
 
@@ -53,7 +62,47 @@ fun Category(viewModel: CategoryViewModel) {
 
   if (viewModel.errorMessage.isEmpty() && playlists != null) {
     Column(Modifier.fillMaxSize()) {
-      Text("Category")
+      Box(Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp)) {
+        Text(
+          viewModel.category.name,
+          style = MaterialTheme.typography.h4,
+          fontWeight = FontWeight.Bold
+        )
+      }
+
+      LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        contentPadding = PaddingValues(
+          start = 24.dp,
+          top = 12.dp,
+          end = 24.dp,
+          bottom = 36.dp
+        )
+      ) {
+        items(playlists) {
+          Card(
+            elevation = 3.dp, shape = RoundedCornerShape(5.dp),
+            modifier = Modifier.fillMaxWidth().height(64.dp)
+              .clickable(true, onClick = {
+                println("clicked ${it.name}")
+              })
+          ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+              AsyncImage(
+                model = it.images.last().href,
+                contentDescription = null
+              )
+              Column(Modifier.align(Alignment.CenterVertically)) {
+                Text(
+                  it.name,
+                  style = MaterialTheme.typography.body1,
+                  fontWeight = FontWeight.Bold
+                )
+              }
+            }
+          }
+        }
+      }
     }
   } else {
     Text(viewModel.errorMessage)

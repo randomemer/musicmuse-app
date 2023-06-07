@@ -7,9 +7,19 @@ import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 
 val DarkColourPalette =
-  darkColors(primary = primary, secondary = secondary, background = background, surface = surface, onPrimary = text)
+  darkColors(
+    primary = primary,
+    secondary = secondary,
+    background = background,
+    surface = surface,
+    onPrimary = text,
+  )
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-  MaterialTheme(colors = DarkColourPalette, content = content)
+  MaterialTheme(
+    colors = DarkColourPalette,
+    content = content,
+    typography = MusicMuseTypography
+  )
 }
