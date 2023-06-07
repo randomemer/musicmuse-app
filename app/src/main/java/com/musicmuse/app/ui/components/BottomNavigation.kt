@@ -11,11 +11,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.musicmuse.app.ui.config.primary
-import com.musicmuse.app.ui.nav.NavigationItem
+import com.musicmuse.app.ui.nav.AppNavGraph
 
 @Composable
 fun BottomNav(navController: NavController) {
-  val items = listOf(NavigationItem.Home, NavigationItem.Explore, NavigationItem.Profile)
+  val items = listOf(AppNavGraph.Home, AppNavGraph.Explore, AppNavGraph.Profile)
 
   BottomNavigation {
     val navBackStackEntry by navController.currentBackStackEntryAsState()

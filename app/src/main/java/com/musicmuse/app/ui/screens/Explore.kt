@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.musicmuse.app.utils.SpotifyApiService
 import com.musicmuse.app.utils.SpotifyCategory
@@ -30,7 +31,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ExploreViewModel : ViewModel() {
-  private val _categories = mutableStateOf<SpotifyPaginatedModel<SpotifyCategory>?>(null)
+  private val _categories =
+    mutableStateOf<SpotifyPaginatedModel<SpotifyCategory>?>(null)
   var errorMessage: String by mutableStateOf("")
   val categories: SpotifyPaginatedModel<SpotifyCategory>? get() = _categories.value
 
@@ -50,7 +52,7 @@ class ExploreViewModel : ViewModel() {
 }
 
 @Composable
-fun Explore(viewModel: ExploreViewModel) {
+fun Explore(viewModel: ExploreViewModel, navController: NavController) {
   var searchValue by remember { mutableStateOf(TextFieldValue("")) }
 
   LaunchedEffect(Unit, block = {
@@ -63,7 +65,8 @@ fun Explore(viewModel: ExploreViewModel) {
     Column(Modifier.fillMaxSize()) {
       Box {
         Column(
-          Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
+          Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
+          verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
           Text("Explore", fontSize = 24.sp, fontWeight = FontWeight.Medium)
           TextField(
@@ -85,7 +88,12 @@ fun Explore(viewModel: ExploreViewModel) {
         columns = GridCells.Adaptive(minSize = 156.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalArrangement = Arrangement.spacedBy(18.dp),
-        contentPadding = PaddingValues(start = 24.dp, top = 12.dp, end = 24.dp, bottom = 36.dp)
+        contentPadding = PaddingValues(
+          start = 24.dp,
+          top = 12.dp,
+          end = 24.dp,
+          bottom = 36.dp
+        )
       ) {
         items(categories, itemContent = {
           Card(
@@ -93,9 +101,14 @@ fun Explore(viewModel: ExploreViewModel) {
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier.clickable(true, onClick = {
               println("clicked ${it.name}")
+              navController.navigate("explore_category/${it.id}")
             })
           ) {
-            AsyncImage(model = it.icons[0].href, contentDescription = null, contentScale = ContentScale.Crop)
+            AsyncImage(
+              model = it.icons[0].href,
+              contentDescription = null,
+              contentScale = ContentScale.Crop
+            )
           }
         })
       }

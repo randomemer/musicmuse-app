@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
   private fun getSpotifyToken() {
     val content = findViewById<View>(android.R.id.content)
 
-    content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+    content.viewTreeObserver.addOnPreDrawListener(object :
+      ViewTreeObserver.OnPreDrawListener {
       override fun onPreDraw(): Boolean {
         GlobalScope.launch {
           try {

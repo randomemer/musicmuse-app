@@ -2,12 +2,60 @@
 
 package com.musicmuse.app.ui.screens
 
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.musicmuse.app.utils.SpotifyApiService
+import com.musicmuse.app.utils.SpotifyPaginatedModel
+import com.musicmuse.app.utils.SpotifySimplifiedPlaylist
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 
-class CategoryViewModel : ViewModel() {}
+class CategoryViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+  private val categoryId: String = checkNotNull(savedStateHandle["categoryId"])
+
+  private val _playlists =
+    mutableStateOf<SpotifyPaginatedModel<SpotifySimplifiedPlaylist>?>(null)
+
+  var errorMessage: String by mutableStateOf("")
+
+  val playlists: SpotifyPaginatedModel<SpotifySimplifiedPlaylist>? get() = _playlists.value
+
+  fun getCategoryPlaylists() {
+    viewModelScope.launch {
+      try {
+        val resp = SpotifyApiService().api.getCategoryPlaylists(categoryId)
+        _playlists.value = resp.playlists
+      } catch (e: Exception) {
+        e.printStackTrace()
+        if (e is HttpException) {
+          println(e.response()?.errorBody()?.string())
+        }
+        errorMessage = e.message.toString()
+      }
+    }
+  }
+}
 
 @Composable
 fun Category(viewModel: CategoryViewModel) {
+  LaunchedEffect(Unit, block = {
+    viewModel.getCategoryPlaylists()
+  })
+
+  val playlists = viewModel.playlists?.items
+
+  if (viewModel.errorMessage.isEmpty() && playlists != null) {
+    Column(Modifier.fillMaxSize()) {
+      Text("Category")
+    }
+  } else {
+    Text(viewModel.errorMessage)
+  }
 }

@@ -14,4 +14,7 @@ interface SpotifyAuthApi {
 interface SpotifyApi {
   @GET("browse/categories")
   suspend fun getCategories(): SpotifyCategoriesResponse
+
+  @GET("browse/categories/{id}/playlists")
+  suspend fun getCategoryPlaylists(@Path("id") id: String): SpotifyCategoryPlaylistsResponse
 }
