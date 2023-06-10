@@ -9,10 +9,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.musicmuse.app.api.SpotifyAuthApiService
 import com.musicmuse.app.ui.config.AppTheme
 import com.musicmuse.app.ui.screens.Main
 import com.musicmuse.app.utils.GlobalData
-import com.musicmuse.app.utils.SpotifyAuthApiService
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

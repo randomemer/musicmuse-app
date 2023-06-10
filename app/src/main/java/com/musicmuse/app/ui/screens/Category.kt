@@ -18,8 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.musicmuse.app.utils.*
+import com.musicmuse.app.api.SpotifyApiService
+import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.api.models.SpotifyPaginatedModel
+import com.musicmuse.app.api.models.SpotifySimplifiedPlaylist
+import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -53,10 +58,10 @@ class CategoryViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 }
 
 @Composable
-fun Category(viewModel: CategoryViewModel) {
-  LaunchedEffect(Unit, block = {
+fun Category(viewModel: CategoryViewModel, navController: NavController) {
+  LaunchedEffect(Unit) {
     viewModel.getCategoryPlaylists()
-  })
+  }
 
   val playlists = viewModel.playlists?.items
 
@@ -85,6 +90,7 @@ fun Category(viewModel: CategoryViewModel) {
             modifier = Modifier.fillMaxWidth().height(64.dp)
               .clickable(true, onClick = {
                 println("clicked ${it.name}")
+                navController.navigate("explore_playlist/${it.id}")
               })
           ) {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {

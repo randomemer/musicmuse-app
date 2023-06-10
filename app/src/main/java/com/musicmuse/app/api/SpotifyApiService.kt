@@ -1,7 +1,13 @@
-package com.musicmuse.app.utils
+package com.musicmuse.app.api
 
 import android.util.Base64
+import com.musicmuse.app.api.models.SpotifyEpisode
+import com.musicmuse.app.api.models.SpotifyResource
+import com.musicmuse.app.api.models.SpotifyTokenResponse
+import com.musicmuse.app.api.models.SpotifyTrack
+import com.musicmuse.app.utils.GlobalData
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
@@ -15,7 +21,16 @@ class SpotifyAuthApiService {
   }
 
   private fun createSpotifyAuthApi(): SpotifyAuthApi {
-    val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    val trackAdapterFactory =
+      PolymorphicJsonAdapterFactory.of(SpotifyResource::class.java, "type")
+        .withSubtype(SpotifyTrack::class.java, "track")
+        .withSubtype(SpotifyEpisode::class.java, "episode")
+
+    val moshi = Moshi.Builder()
+      .add(KotlinJsonAdapterFactory())
+      .add(trackAdapterFactory)
+      .build()
+
     val retrofit = Retrofit.Builder().baseUrl("https://accounts.spotify.com")
       .addConverterFactory(MoshiConverterFactory.create(moshi)).build()
 

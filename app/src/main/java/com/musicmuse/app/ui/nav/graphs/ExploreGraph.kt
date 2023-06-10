@@ -10,10 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.musicmuse.app.ui.nav.AppNavGraph
 import com.musicmuse.app.ui.nav.ExploreNavGraph
-import com.musicmuse.app.ui.screens.Category
-import com.musicmuse.app.ui.screens.CategoryViewModel
-import com.musicmuse.app.ui.screens.Explore
-import com.musicmuse.app.ui.screens.ExploreViewModel
+import com.musicmuse.app.ui.screens.*
 
 
 fun NavGraphBuilder.ExploreGraph(navController: NavController) {
@@ -38,7 +35,19 @@ fun NavGraphBuilder.ExploreGraph(navController: NavController) {
       // Get the ViewModel scoped to the `parentNavigationRoute` Nav graph
       val categoryViewModel: CategoryViewModel = viewModel(parentEntry)
 
-      Category(categoryViewModel)
+      Category(categoryViewModel, navController)
+    }
+
+    composable(
+      route = ExploreNavGraph.playlist.route,
+      arguments = ExploreNavGraph.playlist.arguments
+    ) {
+      val parentEntry = remember(it) {
+        navController.getBackStackEntry(ExploreNavGraph.playlist.route)
+      }
+      val playlistViewModel: PlaylistViewModel = viewModel(parentEntry)
+
+      Playlist(playlistViewModel)
     }
   }
 }

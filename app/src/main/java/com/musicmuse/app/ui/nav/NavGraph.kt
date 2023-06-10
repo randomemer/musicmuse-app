@@ -34,4 +34,8 @@ object ExploreNavGraph {
     "explore_category/{categoryId}",
     listOf(navArgument("categoryId") { type = NavType.StringType })
   )
+  val playlist = NavGraphItem(
+    "explore_playlist/{playlistId}",
+    listOf(navArgument("playlistId") { type = NavType.StringType })
+  )
 }

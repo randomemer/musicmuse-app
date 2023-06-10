@@ -20,10 +20,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.musicmuse.app.api.SpotifyApiService
+import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.api.models.SpotifyPaginatedModel
 import com.musicmuse.app.utils.GlobalData
-import com.musicmuse.app.utils.SpotifyApiService
-import com.musicmuse.app.utils.SpotifyCategory
-import com.musicmuse.app.utils.SpotifyPaginatedModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -31,7 +31,7 @@ class ExploreViewModel : ViewModel() {
   private val _categories =
     mutableStateOf<SpotifyPaginatedModel<SpotifyCategory>?>(null)
   var errorMessage: String by mutableStateOf("")
-  val categories: SpotifyPaginatedModel<SpotifyCategory>? get() = _categories.value
+  val categories get() = _categories.value
 
   fun getCategories() {
     viewModelScope.launch {
