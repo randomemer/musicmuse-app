@@ -24,6 +24,7 @@ import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategory
 import com.musicmuse.app.api.models.SpotifyPaginatedModel
 import com.musicmuse.app.api.models.SpotifySimplifiedPlaylist
+import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -65,51 +66,61 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
 
   val playlists = viewModel.playlists?.items
 
-  if (viewModel.errorMessage.isEmpty() && playlists != null) {
-    Column(Modifier.fillMaxSize()) {
-      Box(Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp)) {
-        Text(
-          viewModel.category.name,
-          style = MaterialTheme.typography.h4,
-          fontWeight = FontWeight.Bold
-        )
-      }
+  if (viewModel.errorMessage.isEmpty()) {
+    if (playlists != null) {
+      Column(Modifier.fillMaxSize()) {
+        Box(Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp)) {
+          Text(
+            viewModel.category.name,
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold
+          )
+        }
 
-      LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(18.dp),
-        contentPadding = PaddingValues(
-          start = 24.dp,
-          top = 12.dp,
-          end = 24.dp,
-          bottom = 36.dp
-        )
-      ) {
-        items(playlists) {
-          Card(
-            elevation = 3.dp, shape = RoundedCornerShape(5.dp),
-            modifier = Modifier.fillMaxWidth().height(64.dp)
-              .clickable(true, onClick = {
-                println("clicked ${it.name}")
-                navController.navigate("explore_playlist/${it.id}")
-              })
-          ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-              AsyncImage(
-                model = it.images.last().href,
-                contentDescription = null
-              )
-              Column(Modifier.align(Alignment.CenterVertically)) {
-                Text(
-                  it.name,
-                  style = MaterialTheme.typography.body1,
-                  fontWeight = FontWeight.Bold
+        LazyColumn(
+          verticalArrangement = Arrangement.spacedBy(18.dp),
+          contentPadding = PaddingValues(
+            start = 24.dp,
+            top = 12.dp,
+            end = 24.dp,
+            bottom = 36.dp
+          )
+        ) {
+          items(playlists) {
+            Card(
+              elevation = 3.dp, shape = RoundedCornerShape(5.dp),
+              modifier = Modifier.fillMaxWidth().height(64.dp)
+                .clickable(true, onClick = {
+                  println("clicked ${it.name}")
+                  navController.navigate("explore_playlist/${it.id}")
+                })
+            ) {
+              Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                AsyncImage(
+                  model = it.images.last().href,
+                  contentDescription = null
                 )
+                Column(Modifier.align(Alignment.CenterVertically)) {
+                  Text(
+                    it.name,
+                    style = MaterialTheme.typography.body1,
+                    fontWeight = FontWeight.Bold
+                  )
+                }
               }
             }
           }
         }
       }
+    } else {
+      Loading()
     }
+  } else {
+    Text(viewModel.errorMessage)
+  }
+
+  if (viewModel.errorMessage.isEmpty() && playlists != null) {
+
   } else {
     Text(viewModel.errorMessage)
   }

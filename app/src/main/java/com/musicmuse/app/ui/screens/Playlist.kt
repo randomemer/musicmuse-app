@@ -2,18 +2,20 @@
 
 package com.musicmuse.app.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
@@ -23,6 +25,8 @@ import coil.compose.AsyncImage
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyPlaylistResponse
 import com.musicmuse.app.api.models.SpotifyTrack
+import com.musicmuse.app.ui.components.Loading
+import com.musicmuse.app.ui.components.TrackPlayerViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -50,8 +54,13 @@ class PlaylistViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Playlist(playlistViewModel: PlaylistViewModel) {
+fun Playlist(
+  playlistViewModel: PlaylistViewModel,
+  trackPlayerVM: TrackPlayerViewModel
+) {
+  val context = LocalContext.current
   LaunchedEffect(Unit) {
     playlistViewModel.getPlaylist()
   }
@@ -62,18 +71,9 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
 
   if (errorMessage.isEmpty()) {
     // when loading
-    if (playlist == null) {
-      Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-      ) {
-        CircularProgressIndicator()
-      }
-    }
+    if (playlist == null) Loading()
     // when loaded
     else {
-      println(tracks?.items?.size)
       Column(Modifier.fillMaxSize()) {
         Box(Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp)) {
           Text(
@@ -84,7 +84,7 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
         }
 
         LazyColumn(
-          verticalArrangement = Arrangement.spacedBy(18.dp),
+          verticalArrangement = Arrangement.spacedBy(9.dp),
           contentPadding = PaddingValues(
             start = 24.dp,
             top = 12.dp,
@@ -95,9 +95,10 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
           items(tracks!!.items) {
             Card(
               elevation = 3.dp, shape = RoundedCornerShape(5.dp),
-              modifier = Modifier.fillMaxWidth().height(64.dp)
+              modifier = Modifier.fillMaxWidth().height(56.dp)
                 .clickable(true, onClick = {
-                  println("clicked ${it.track}")
+                  println("clicked ${it.track.uri}")
+                  trackPlayerVM.playTrack(it.track as SpotifyTrack)
                 })
             ) {
               when (it.track) {
@@ -105,7 +106,7 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
                   val artists = it.track.artists.map { item -> item.name }
                   val artistsString = artists.joinToString(", ")
 
-                  Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                  Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     AsyncImage(
                       modifier = Modifier.fillMaxHeight(),
                       model = it.track.album.images.last().href,
@@ -114,12 +115,16 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
                     Column(Modifier.align(Alignment.CenterVertically)) {
                       Text(
                         it.track.name,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee(),
                         style = MaterialTheme.typography.body1,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                       )
 
                       Text(
                         artistsString,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee(),
                         style = MaterialTheme.typography.body2
                       )
                     }

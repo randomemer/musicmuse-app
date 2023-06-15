@@ -21,22 +21,31 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.musicmuse.app.api.SpotifyApiService
+import com.musicmuse.app.api.models.SpotifyCategoriesResponse
 import com.musicmuse.app.api.models.SpotifyCategory
-import com.musicmuse.app.api.models.SpotifyPaginatedModel
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ExploreViewModel : ViewModel() {
-  private val _categories =
-    mutableStateOf<SpotifyPaginatedModel<SpotifyCategory>?>(null)
+  private val _categories = mutableStateOf<List<SpotifyCategory>?>(null)
   var errorMessage: String by mutableStateOf("")
   val categories get() = _categories.value
 
   fun getCategories() {
     viewModelScope.launch {
       try {
-        _categories.value = SpotifyApiService().api.getCategories().categories
+        var resp: SpotifyCategoriesResponse
+        val items = mutableListOf<SpotifyCategory>()
+        var i = 0
+
+        do {
+          resp = SpotifyApiService().api.getCategories(offset = i * 50)
+          items.addAll(resp.categories.items)
+          i++
+        } while (resp.categories.next != null)
+
+        _categories.value = items
       } catch (e: Exception) {
         e.printStackTrace()
         if (e is HttpException) {
@@ -56,7 +65,7 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
     viewModel.getCategories()
   })
 
-  val categories = viewModel.categories?.items
+  val categories = viewModel.categories
 
   if (viewModel.errorMessage.isEmpty() && categories != null) {
     Column(Modifier.fillMaxSize()) {
