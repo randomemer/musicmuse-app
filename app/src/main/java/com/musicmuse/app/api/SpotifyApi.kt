@@ -5,6 +5,7 @@ import com.musicmuse.app.api.models.SpotifyCategoryPlaylistsResponse
 import com.musicmuse.app.api.models.SpotifyPlaylistResponse
 import com.musicmuse.app.api.models.SpotifyTokenResponse
 import retrofit2.http.*
+import java.util.*
 
 interface SpotifyAuthApi {
   @POST("api/token")
@@ -19,11 +20,13 @@ interface SpotifyApi {
   @GET("browse/categories")
   suspend fun getCategories(
     @Query("limit") limit: Int = 50,
-    @Query("offset") offset: Int = 0
+    @Query("offset") offset: Int = 0,
   ): SpotifyCategoriesResponse
 
   @GET("browse/categories/{id}/playlists")
-  suspend fun getCategoryPlaylists(@Path("id") id: String): SpotifyCategoryPlaylistsResponse
+  suspend fun getCategoryPlaylists(
+    @Path("id") id: String,
+  ): SpotifyCategoryPlaylistsResponse
 
   @GET("playlists/{id}")
   suspend fun getPlaylist(@Path("id") id: String): SpotifyPlaylistResponse

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.musicmuse.app.ui.components.BottomNav
@@ -26,7 +27,10 @@ fun Main() {
         Box(Modifier.padding(paddingValues)) {
           NavigationHost(navController, trackPlayerViewModel)
 
-          TrackPlayer(trackPlayerViewModel)
+          Box(Modifier.align(Alignment.BottomCenter)) {
+            TrackPlayer(trackPlayerViewModel)
+          }
+
         }
       })
   }
