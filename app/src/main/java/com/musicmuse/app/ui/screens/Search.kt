@@ -20,10 +20,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifySearchResponse
-import com.musicmuse.app.ui.components.Loading
-import com.musicmuse.app.ui.components.PlaylistItem
-import com.musicmuse.app.ui.components.SearchField
-import com.musicmuse.app.ui.components.TrackItem
+import com.musicmuse.app.ui.components.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -72,9 +69,8 @@ fun Search(viewModel: SearchViewModel, navController: NavController) {
   }) { paddingValues ->
     Box(Modifier.padding(paddingValues)) {
       if (viewModel.isSearching) Loading()
-      else if (viewModel.errorMessage.isNotEmpty()) {
-        Text(viewModel.errorMessage)
-      } else if (viewModel.results != null) {
+      else if (viewModel.errorMessage.isNotEmpty()) ErrorComponent(viewModel.errorMessage)
+      else if (viewModel.results != null) {
         Column(Modifier.fillMaxSize()) {
           // Chips
           Row(
@@ -116,9 +112,7 @@ fun Search(viewModel: SearchViewModel, navController: NavController) {
             }
           }
         }
-      } else {
-        Text("Start searching!")
-      }
+      } else SearchIdle()
     }
   }
 }

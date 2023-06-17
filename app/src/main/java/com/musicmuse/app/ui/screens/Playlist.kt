@@ -23,6 +23,7 @@ import com.musicmuse.app.LocalActivity
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyPlaylistResponse
 import com.musicmuse.app.api.models.SpotifyTrack
+import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.TrackItem
 import com.musicmuse.app.ui.components.TrackPlayerViewModel
@@ -64,10 +65,8 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
 
   val playlist = playlistViewModel.playlist
   val tracks = playlist?.tracks
-  val errorMessage = playlistViewModel.errorMessage
 
-
-  if (errorMessage.isEmpty()) {
+  if (playlistViewModel.errorMessage.isEmpty()) {
     // when loading
     if (playlist == null) Loading()
     // when loaded
@@ -112,6 +111,6 @@ fun Playlist(playlistViewModel: PlaylistViewModel) {
   }
   // when error
   else {
-    Text(errorMessage)
+    ErrorComponent(playlistViewModel.errorMessage)
   }
 }

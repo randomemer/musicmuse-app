@@ -31,7 +31,7 @@ fun PlaylistItem(
   ) {
     Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
       AsyncImage(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier.fillMaxHeight().width(64.dp),
         model = playlist.images.last().href,
         contentDescription = null
       )

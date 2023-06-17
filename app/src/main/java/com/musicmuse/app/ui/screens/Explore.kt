@@ -26,6 +26,8 @@ import coil.compose.AsyncImage
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategoriesResponse
 import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.ui.components.ErrorComponent
+import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.nav.ExploreNavGraph
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
@@ -71,73 +73,77 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
 
   val categories = viewModel.categories
 
-  if (viewModel.errorMessage.isEmpty() && categories != null) {
-    Column(Modifier.fillMaxSize()) {
-      Column(
-        Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-      ) {
-        Text(
-          "Explore",
-          style = MaterialTheme.typography.h4,
-          fontWeight = FontWeight.Bold
-        )
+  Column(Modifier.fillMaxSize()) {
+    Column(
+      Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+      Text(
+        "Explore",
+        style = MaterialTheme.typography.h4,
+        fontWeight = FontWeight.Bold
+      )
 
-        val interactionSource = remember { MutableInteractionSource() }
-        TextField(
-          modifier = Modifier.fillMaxWidth().clickable(
-            indication = null,
-            interactionSource = interactionSource
-          ) {
-            navController.navigate(ExploreNavGraph.search.route)
-          },
-          enabled = false,
-          readOnly = true,
-          value = TextFieldValue(""),
-          placeholder = { Text("Search") },
-          shape = RoundedCornerShape(10),
-          onValueChange = { },
-          colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-          ),
-          leadingIcon = {
-            Icon(Icons.Rounded.Search, "Search")
-          }
-        )
-      }
+      val interactionSource = remember { MutableInteractionSource() }
+      TextField(
+        modifier = Modifier.fillMaxWidth().clickable(
+          indication = null,
+          interactionSource = interactionSource
+        ) {
+          navController.navigate(ExploreNavGraph.search.route)
+        },
+        enabled = false,
+        readOnly = true,
+        value = TextFieldValue(""),
+        placeholder = { Text("Search") },
+        shape = RoundedCornerShape(10),
+        onValueChange = { },
+        colors = TextFieldDefaults.textFieldColors(
+          focusedIndicatorColor = Color.Transparent,
+          unfocusedIndicatorColor = Color.Transparent,
+          disabledIndicatorColor = Color.Transparent
+        ),
+        leadingIcon = {
+          Icon(Icons.Rounded.Search, "Search")
+        }
+      )
+    }
 
-      LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 156.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
-        horizontalArrangement = Arrangement.spacedBy(18.dp),
-        contentPadding = PaddingValues(
-          start = 24.dp,
-          top = 12.dp,
-          end = 24.dp,
-          bottom = 36.dp
-        )
-      ) {
-        items(categories) {
-          Card(
-            elevation = 3.dp,
-            shape = RoundedCornerShape(5.dp),
-            modifier = Modifier.clickable(true, onClick = {
-              GlobalData.put(it.id, it)
-              navController.navigate("explore_category/${it.id}")
-            })
-          ) {
-            AsyncImage(
-              model = it.icons[0].href,
-              contentDescription = null,
-              contentScale = ContentScale.Crop
-            )
+
+    if (viewModel.errorMessage.isEmpty()) {
+      if (categories == null) Loading()
+      else {
+        LazyVerticalGrid(
+          columns = GridCells.Adaptive(minSize = 156.dp),
+          verticalArrangement = Arrangement.spacedBy(18.dp),
+          horizontalArrangement = Arrangement.spacedBy(18.dp),
+          contentPadding = PaddingValues(
+            start = 24.dp,
+            top = 12.dp,
+            end = 24.dp,
+            bottom = 36.dp
+          )
+        ) {
+          items(categories) {
+            Card(
+              elevation = 3.dp,
+              shape = RoundedCornerShape(5.dp),
+              modifier = Modifier.clickable(true, onClick = {
+                GlobalData.put(it.id, it)
+                navController.navigate("explore_category/${it.id}")
+              })
+            ) {
+              AsyncImage(
+                model = it.icons[0].href,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+              )
+            }
           }
         }
       }
+    } else {
+      ErrorComponent(viewModel.errorMessage)
     }
-  } else {
-    Text(viewModel.errorMessage)
   }
 }

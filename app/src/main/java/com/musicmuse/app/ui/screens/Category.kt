@@ -19,6 +19,7 @@ import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategory
 import com.musicmuse.app.api.models.SpotifyPaginatedModel
 import com.musicmuse.app.api.models.SpotifySimplifiedPlaylist
+import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.PlaylistItem
 import com.musicmuse.app.utils.GlobalData
@@ -91,7 +92,7 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
       Loading()
     }
   } else {
-    Text(viewModel.errorMessage)
+    ErrorComponent(viewModel.errorMessage)
   }
 
   if (viewModel.errorMessage.isEmpty() && playlists != null) {
