@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -17,6 +19,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+
+val LocalActivity = staticCompositionLocalOf<MainActivity> {
+  error("LocalActivity is not present")
+}
 
 class MainActivity : AppCompatActivity() {
   private lateinit var auth: FirebaseAuth
@@ -33,8 +39,10 @@ class MainActivity : AppCompatActivity() {
     auth = Firebase.auth;
 
     setContent {
-      AppTheme {
-        Main()
+      CompositionLocalProvider(LocalActivity provides this@MainActivity) {
+        AppTheme {
+          Main()
+        }
       }
     }
   }

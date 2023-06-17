@@ -30,6 +30,7 @@ object HomeNavGraph {
 
 object ExploreNavGraph {
   val root = NavGraphItem("explore_main")
+  val search = NavGraphItem("explore_search")
   val category = NavGraphItem(
     "explore_category/{categoryId}",
     listOf(navArgument("categoryId") { type = NavType.StringType })

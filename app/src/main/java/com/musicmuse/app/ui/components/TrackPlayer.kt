@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.musicmuse.app.LocalActivity
 import com.musicmuse.app.api.models.SpotifyTrack
 import com.musicmuse.app.ui.config.secondary
 
@@ -78,7 +80,8 @@ class TrackPlayerViewModel : ViewModel() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TrackPlayer(viewModel: TrackPlayerViewModel) {
+fun TrackPlayer() {
+  val viewModel: TrackPlayerViewModel = viewModel(LocalActivity.current)
   val track = viewModel.track
   val isPlaying = viewModel.isPlaying
 

@@ -3,12 +3,15 @@
 package com.musicmuse.app.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,14 +26,17 @@ import coil.compose.AsyncImage
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategoriesResponse
 import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.ui.nav.ExploreNavGraph
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ExploreViewModel : ViewModel() {
-  private val _categories = mutableStateOf<List<SpotifyCategory>?>(null)
-  var errorMessage: String by mutableStateOf("")
-  val categories get() = _categories.value
+  private var _categories: List<SpotifyCategory>? by mutableStateOf(null)
+  var errorMessage by mutableStateOf("")
+
+  val categories get() = _categories
+
 
   fun getCategories() {
     viewModelScope.launch {
@@ -45,7 +51,7 @@ class ExploreViewModel : ViewModel() {
           i++
         } while (resp.categories.next != null)
 
-        _categories.value = items
+        _categories = items
       } catch (e: Exception) {
         e.printStackTrace()
         if (e is HttpException) {
@@ -59,39 +65,47 @@ class ExploreViewModel : ViewModel() {
 
 @Composable
 fun Explore(viewModel: ExploreViewModel, navController: NavController) {
-  var searchValue by remember { mutableStateOf(TextFieldValue("")) }
-
-  LaunchedEffect(Unit, block = {
+  LaunchedEffect(Unit) {
     viewModel.getCategories()
-  })
+  }
 
   val categories = viewModel.categories
 
   if (viewModel.errorMessage.isEmpty() && categories != null) {
     Column(Modifier.fillMaxSize()) {
-      Box {
-        Column(
-          Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
-          verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-          Text(
-            "Explore",
-            style = MaterialTheme.typography.h4,
-            fontWeight = FontWeight.Bold
-          )
-          TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = searchValue,
-            placeholder = { Text("Search") },
-            shape = RoundedCornerShape(100),
-            onValueChange = { searchValue = it },
-            colors = TextFieldDefaults.textFieldColors(
-              focusedIndicatorColor = Color.Transparent,
-              unfocusedIndicatorColor = Color.Transparent,
-              disabledIndicatorColor = Color.Transparent
-            )
-          )
-        }
+      Column(
+        Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+      ) {
+        Text(
+          "Explore",
+          style = MaterialTheme.typography.h4,
+          fontWeight = FontWeight.Bold
+        )
+
+        val interactionSource = remember { MutableInteractionSource() }
+        TextField(
+          modifier = Modifier.fillMaxWidth().clickable(
+            indication = null,
+            interactionSource = interactionSource
+          ) {
+            navController.navigate(ExploreNavGraph.search.route)
+          },
+          enabled = false,
+          readOnly = true,
+          value = TextFieldValue(""),
+          placeholder = { Text("Search") },
+          shape = RoundedCornerShape(10),
+          onValueChange = { },
+          colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+          ),
+          leadingIcon = {
+            Icon(Icons.Rounded.Search, "Search")
+          }
+        )
       }
 
       LazyVerticalGrid(

@@ -33,3 +33,8 @@ open class SpotifyResource(
   @Json(name = "type") open val type: String,
   @Json(name = "uri") open val uri: String
 )
+
+data class SpotifySearchResponse(
+  @Json(name = "tracks") val tracks: SpotifyPaginatedModel<SpotifyTrack>,
+  @Json(name = "playlists") val playlists: SpotifyPaginatedModel<SpotifySimplifiedPlaylist>
+)

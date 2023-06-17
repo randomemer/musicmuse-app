@@ -8,16 +8,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.musicmuse.app.ui.components.TrackPlayerViewModel
 import com.musicmuse.app.ui.nav.AppNavGraph
 import com.musicmuse.app.ui.nav.ExploreNavGraph
 import com.musicmuse.app.ui.screens.*
 
 
-fun NavGraphBuilder.ExploreGraph(
-  navController: NavController,
-  trackPlayerVM: TrackPlayerViewModel
-) {
+fun NavGraphBuilder.ExploreGraph(navController: NavController) {
   navigation(
     route = AppNavGraph.Explore.route,
     startDestination = ExploreNavGraph.root.route
@@ -26,6 +22,15 @@ fun NavGraphBuilder.ExploreGraph(
 
     composable(route = ExploreNavGraph.root.route) {
       Explore(exploreViewModel, navController)
+    }
+
+    composable(route = ExploreNavGraph.search.route) {
+      val parentEntry = remember(it) {
+        navController.getBackStackEntry(ExploreNavGraph.search.route)
+      }
+      val searchViewModel: SearchViewModel = viewModel(parentEntry)
+
+      Search(searchViewModel, navController)
     }
 
     composable(
@@ -51,7 +56,7 @@ fun NavGraphBuilder.ExploreGraph(
       }
       val playlistViewModel: PlaylistViewModel = viewModel(parentEntry)
 
-      Playlist(playlistViewModel, trackPlayerVM)
+      Playlist(playlistViewModel)
     }
   }
 }
