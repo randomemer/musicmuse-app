@@ -1,6 +1,7 @@
 <resources>
   <!-- Base application theme. -->
-  <style name="Theme.MusicMuse" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+  <style name="Theme.MusicMuse"
+         parent="Theme.MaterialComponents.DayNight.NoActionBar">
     <!-- Primary brand color. -->
     <item name="colorPrimary">@color/primary</item>
     <item name="colorOnPrimary">@color/text</item>
@@ -14,7 +15,7 @@
 
   <style name="SplashScreenTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/background</item>
-    <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>
     <item name="postSplashScreenTheme">@style/Theme.MusicMuse</item>
   </style>
 </resources>

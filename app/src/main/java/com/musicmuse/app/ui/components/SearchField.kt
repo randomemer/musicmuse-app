@@ -12,12 +12,15 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import com.musicmuse.app.ui.screens.SearchViewModel
 
 @Composable
 fun SearchField(viewModel: SearchViewModel) {
+  val focusManager = LocalFocusManager.current
+
   TextField(
     modifier = Modifier.fillMaxWidth(),
     value = viewModel.searchValue,
@@ -26,6 +29,7 @@ fun SearchField(viewModel: SearchViewModel) {
     shape = RoundedCornerShape(10),
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
     keyboardActions = KeyboardActions(onSearch = {
+      focusManager.clearFocus()
       viewModel.search()
     }),
     onValueChange = { viewModel.searchValue = it },
