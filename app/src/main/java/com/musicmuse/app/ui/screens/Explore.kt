@@ -9,9 +9,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +28,7 @@ import com.musicmuse.app.api.models.SpotifyCategoriesResponse
 import com.musicmuse.app.api.models.SpotifyCategory
 import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
+import com.musicmuse.app.ui.components.TrackPlayerHeight
 import com.musicmuse.app.ui.nav.ExploreNavGraph
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
@@ -65,6 +66,7 @@ class ExploreViewModel : ViewModel() {
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Explore(viewModel: ExploreViewModel, navController: NavController) {
   LaunchedEffect(Unit) {
@@ -80,7 +82,7 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
     ) {
       Text(
         "Explore",
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
       )
 
@@ -121,12 +123,11 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
             start = 24.dp,
             top = 12.dp,
             end = 24.dp,
-            bottom = 36.dp
+            bottom = 24.dp + TrackPlayerHeight
           )
         ) {
           items(categories) {
             Card(
-              elevation = 3.dp,
               shape = RoundedCornerShape(5.dp),
               modifier = Modifier.clickable(true, onClick = {
                 GlobalData.put(it.id, it)
@@ -134,6 +135,7 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
               })
             ) {
               AsyncImage(
+
                 model = it.icons[0].href,
                 contentDescription = null,
                 contentScale = ContentScale.Crop

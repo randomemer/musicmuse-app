@@ -5,9 +5,10 @@ package com.musicmuse.app.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,19 +56,19 @@ class SearchViewModel : ViewModel() {
   }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Search(viewModel: SearchViewModel, navController: NavController) {
   Scaffold(topBar = {
-    TopAppBar {
-      IconButton(onClick = {
-        navController.popBackStack()
-      }) {
-        Icon(Icons.Rounded.ArrowBack, "Go Back")
-      }
-
-      SearchField(viewModel)
-    }
+    TopAppBar(
+      title = { SearchField(viewModel) },
+      navigationIcon = {
+        IconButton(onClick = {
+          navController.popBackStack()
+        }) {
+          Icon(Icons.Rounded.ArrowBack, "Go Back")
+        }
+      })
   }) { paddingValues ->
     Box(Modifier.padding(paddingValues)) {
       if (viewModel.isSearching) Loading()
@@ -80,24 +81,24 @@ fun Search(viewModel: SearchViewModel, navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(9.dp)
           ) {
             FilterChip(
+              label = { Text("Tracks") },
               selected = (viewModel.filter == "tracks"),
-              colors = ChipDefaults.filterChipColors(
-                selectedBackgroundColor = primary,
-                selectedContentColor = Color.Black
+              colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = primary,
+                selectedLabelColor = Color.Black
               ),
-              onClick = { viewModel.filter = "tracks" }) {
-              Text("Tracks")
-            }
+              onClick = { viewModel.filter = "tracks" }
+            )
 
             FilterChip(
+              label = { Text("Playlists") },
               selected = (viewModel.filter == "playlists"),
-              colors = ChipDefaults.filterChipColors(
-                selectedBackgroundColor = primary,
-                selectedContentColor = Color.Black
+              colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = primary,
+                selectedLabelColor = Color.Black
               ),
-              onClick = { viewModel.filter = "playlists" }) {
-              Text("Playlists")
-            }
+              onClick = { viewModel.filter = "playlists" }
+            )
           }
 
           // Search Results
@@ -107,7 +108,7 @@ fun Search(viewModel: SearchViewModel, navController: NavController) {
               start = 24.dp,
               top = 12.dp,
               end = 24.dp,
-              bottom = 36.dp
+              bottom = 24.dp + TrackPlayerHeight
             )
           ) {
             if (viewModel.filter == "tracks") {

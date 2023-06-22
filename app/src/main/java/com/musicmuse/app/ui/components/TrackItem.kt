@@ -7,9 +7,9 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +28,7 @@ fun TrackItem(track: SpotifyTrack) {
   val artistsString = artists.joinToString(", ")
 
   Card(
-    elevation = 3.dp, shape = RoundedCornerShape(5.dp),
+    shape = RoundedCornerShape(5.dp),
     modifier = Modifier.fillMaxWidth().height(56.dp)
       .clickable(true, onClick = {
         trackPlayerVM.playTrack(track)
@@ -47,7 +47,7 @@ fun TrackItem(track: SpotifyTrack) {
           track.name,
           maxLines = 1,
           modifier = Modifier.basicMarquee(),
-          style = MaterialTheme.typography.body1,
+          style = MaterialTheme.typography.bodyMedium,
           fontWeight = FontWeight.Bold,
         )
 
@@ -55,7 +55,7 @@ fun TrackItem(track: SpotifyTrack) {
           artistsString,
           maxLines = 1,
           modifier = Modifier.basicMarquee(),
-          style = MaterialTheme.typography.body2
+          style = MaterialTheme.typography.bodySmall
         )
       }
     }

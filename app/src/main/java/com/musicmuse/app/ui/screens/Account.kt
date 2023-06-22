@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package com.musicmuse.app.ui.screens
 
 import androidx.compose.foundation.layout.Column

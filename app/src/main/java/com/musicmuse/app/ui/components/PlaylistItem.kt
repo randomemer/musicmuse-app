@@ -5,9 +5,9 @@ package com.musicmuse.app.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +23,7 @@ fun PlaylistItem(
   navController: NavController
 ) {
   Card(
-    elevation = 3.dp, shape = RoundedCornerShape(5.dp),
+    shape = RoundedCornerShape(5.dp),
     modifier = Modifier.fillMaxWidth().height(64.dp)
       .clickable(true, onClick = {
         navController.navigate("explore_playlist/${playlist.id}")
@@ -38,7 +38,7 @@ fun PlaylistItem(
       Column(Modifier.align(Alignment.CenterVertically)) {
         Text(
           playlist.name,
-          style = MaterialTheme.typography.body1,
+          style = MaterialTheme.typography.bodyMedium,
           fontWeight = FontWeight.Bold
         )
       }

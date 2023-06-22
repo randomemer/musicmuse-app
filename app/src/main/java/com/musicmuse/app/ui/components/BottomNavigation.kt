@@ -2,9 +2,10 @@
 
 package com.musicmuse.app.ui.components
 
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -17,16 +18,18 @@ import com.musicmuse.app.ui.nav.AppNavGraph
 fun BottomNav(navController: NavController) {
   val items = listOf(AppNavGraph.Home, AppNavGraph.Explore, AppNavGraph.Profile)
 
-  BottomNavigation {
+  NavigationBar {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     items.forEach { item ->
-      BottomNavigationItem(
+      NavigationBarItem(
         icon = { Icon(item.icon, item.title) },
         alwaysShowLabel = false,
-        selectedContentColor = primary,
-        unselectedContentColor = Color.White.copy(0.4f),
+        colors = NavigationBarItemDefaults.colors(
+          selectedIconColor = primary,
+          unselectedIconColor = Color.White.copy(0.4f),
+        ),
         selected = currentRoute?.startsWith(item.route) == true,
         onClick = {
           navController.navigate(item.route) {

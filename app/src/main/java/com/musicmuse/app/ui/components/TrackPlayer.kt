@@ -4,18 +4,20 @@ package com.musicmuse.app.ui.components
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -32,11 +34,13 @@ class TrackPlayerViewModel : ViewModel() {
   private var _isPlaying: Boolean by mutableStateOf(false)
   val isPlaying get() = _isPlaying
 
+  var toastMessage: String by mutableStateOf("")
+
   private var mediaPlayer: MediaPlayer? = null
   fun playTrack(track: SpotifyTrack) {
     // In case there's no preview url
     if (track.previewUrl == null) {
-      println("Can' play this track : ${track.name}")
+      toastMessage = "Can't play this track : ${track.name}"
       return
     }
 
@@ -78,9 +82,12 @@ class TrackPlayerViewModel : ViewModel() {
   }
 }
 
+val TrackPlayerHeight = 64.dp
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TrackPlayer() {
+  val context = LocalContext.current
   val viewModel: TrackPlayerViewModel = viewModel(LocalActivity.current)
   val track = viewModel.track
   val isPlaying = viewModel.isPlaying
@@ -89,14 +96,24 @@ fun TrackPlayer() {
     println("Current Track : ${track?.name}")
   }
 
+  LaunchedEffect(viewModel.toastMessage) {
+    if (viewModel.toastMessage.isEmpty()) return@LaunchedEffect
+    val toast = Toast.makeText(
+      context,
+      viewModel.toastMessage,
+      Toast.LENGTH_SHORT
+    )
+    toast.show()
+  }
+
   AnimatedVisibility(
     visible = (track != null),
-    modifier = Modifier.padding(16.dp)
+    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
   ) {
     Card(
-      elevation = 7.dp, shape = RoundedCornerShape(5.dp),
+      shape = RoundedCornerShape(5.dp),
       modifier = Modifier.fillMaxWidth().height(64.dp),
-      backgroundColor = secondary
+      colors = CardDefaults.cardColors(containerColor = secondary),
     ) {
       track!!
       val artists = track.artists.map { item -> item.name }
@@ -113,7 +130,7 @@ fun TrackPlayer() {
           Text(
             track.name, maxLines = 1,
             modifier = Modifier.basicMarquee(),
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
           )
 
@@ -121,7 +138,7 @@ fun TrackPlayer() {
             artists.joinToString(separator = ", "),
             maxLines = 1,
             modifier = Modifier.basicMarquee(),
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.bodySmall
           )
         }
 
