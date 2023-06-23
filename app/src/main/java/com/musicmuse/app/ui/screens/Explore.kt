@@ -12,59 +12,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.musicmuse.app.api.SpotifyApiService
-import com.musicmuse.app.api.models.SpotifyCategoriesResponse
-import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.models.ExploreViewModel
 import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.TrackPlayerHeight
 import com.musicmuse.app.ui.nav.ExploreNavGraph
 import com.musicmuse.app.utils.GlobalData
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-
-class ExploreViewModel : ViewModel() {
-  private var _categories: List<SpotifyCategory>? by mutableStateOf(null)
-  var errorMessage by mutableStateOf("")
-
-  val categories get() = _categories
-
-
-  fun getCategories() {
-    viewModelScope.launch {
-      try {
-        var resp: SpotifyCategoriesResponse
-        val items = mutableListOf<SpotifyCategory>()
-        var i = 0
-
-        do {
-          resp = SpotifyApiService().api.getCategories(offset = i * 50)
-          items.addAll(resp.categories.items)
-          i++
-        } while (resp.categories.next != null)
-
-        _categories = items
-      } catch (e: Exception) {
-        e.printStackTrace()
-        if (e is HttpException) {
-          println(e.response()?.errorBody()?.string())
-        }
-        errorMessage = e.message.toString()
-      }
-    }
-  }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,7 +99,7 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
               })
             ) {
               AsyncImage(
-
+                modifier = Modifier.fillMaxWidth(),
                 model = it.icons[0].href,
                 contentDescription = null,
                 contentScale = ContentScale.Crop

@@ -2,13 +2,16 @@
 
 package com.musicmuse.app.ui.components
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.musicmuse.app.ui.config.primary
@@ -18,7 +21,7 @@ import com.musicmuse.app.ui.nav.AppNavGraph
 fun BottomNav(navController: NavController) {
   val items = listOf(AppNavGraph.Home, AppNavGraph.Explore, AppNavGraph.Profile)
 
-  NavigationBar {
+  NavigationBar(Modifier.height(56.dp)) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 

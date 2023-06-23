@@ -2,60 +2,28 @@
 
 package com.musicmuse.app.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.musicmuse.app.api.SpotifyApiService
-import com.musicmuse.app.api.models.SpotifyCategory
-import com.musicmuse.app.api.models.SpotifyPaginatedModel
-import com.musicmuse.app.api.models.SpotifySimplifiedPlaylist
-import com.musicmuse.app.ui.components.ErrorComponent
-import com.musicmuse.app.ui.components.Loading
-import com.musicmuse.app.ui.components.PlaylistItem
-import com.musicmuse.app.ui.components.TrackPlayerHeight
-import com.musicmuse.app.utils.GlobalData
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import coil.compose.rememberAsyncImagePainter
+import com.musicmuse.app.models.CategoryViewModel
+import com.musicmuse.app.ui.components.*
 
 
-class CategoryViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-  private val categoryId: String = checkNotNull(savedStateHandle["categoryId"])
-
-  private val _playlists =
-    mutableStateOf<SpotifyPaginatedModel<SpotifySimplifiedPlaylist>?>(null)
-  val category get() = GlobalData.get<SpotifyCategory>(categoryId)
-
-
-  var errorMessage: String by mutableStateOf("")
-
-  val playlists: SpotifyPaginatedModel<SpotifySimplifiedPlaylist>? get() = _playlists.value
-
-  fun getCategoryPlaylists() {
-    viewModelScope.launch {
-      try {
-        val resp = SpotifyApiService().api.getCategoryPlaylists(categoryId)
-        _playlists.value = resp.playlists
-      } catch (e: Exception) {
-        e.printStackTrace()
-        if (e is HttpException) {
-          println(e.response()?.errorBody()?.string())
-        }
-        errorMessage = e.message.toString()
-      }
-    }
-  }
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Category(viewModel: CategoryViewModel, navController: NavController) {
   LaunchedEffect(Unit) {
@@ -63,36 +31,52 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
   }
 
   val playlists = viewModel.playlists?.items
+  val appBarImagePainter = rememberAsyncImagePainter(
+    viewModel.category.icons.first().href,
+    contentScale = ContentScale.FillBounds
+  )
+  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+    rememberTopAppBarState()
+  )
 
-  if (viewModel.errorMessage.isEmpty()) {
-    if (playlists != null) {
-      Column(Modifier.fillMaxSize()) {
-        Box(Modifier.padding(24.dp, 24.dp, 24.dp, 12.dp)) {
+
+  Scaffold(
+    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    topBar = {
+      LargeTopAppBar(
+        modifier = Modifier.paint(appBarImagePainter),
+        scrollBehavior = scrollBehavior,
+        navigationIcon = { NavBackButton(navController) },
+        title = {
           Text(
             viewModel.category.name,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
           )
-        }
-
-        LazyColumn(
-          verticalArrangement = Arrangement.spacedBy(9.dp),
-          contentPadding = PaddingValues(
-            start = 24.dp,
-            top = 12.dp,
-            end = 24.dp,
-            bottom = 24.dp + TrackPlayerHeight
-          )
-        ) {
-          items(playlists) {
-            PlaylistItem(it, navController)
+        })
+    }) { paddingValues ->
+    Box(Modifier.padding(paddingValues)) {
+      if (viewModel.errorMessage.isEmpty()) {
+        if (playlists != null) {
+          LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(9.dp),
+            contentPadding = PaddingValues(
+              start = 24.dp,
+              top = 24.dp,
+              end = 24.dp,
+              bottom = 24.dp + TrackPlayerHeight
+            )
+          ) {
+            items(playlists) {
+              PlaylistItem(it, navController)
+            }
           }
+        } else {
+          Loading()
         }
+      } else {
+        ErrorComponent(viewModel.errorMessage)
       }
-    } else {
-      Loading()
     }
-  } else {
-    ErrorComponent(viewModel.errorMessage)
   }
 }

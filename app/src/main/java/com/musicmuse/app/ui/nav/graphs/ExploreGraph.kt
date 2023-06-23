@@ -8,9 +8,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.musicmuse.app.models.CategoryViewModel
+import com.musicmuse.app.models.ExploreViewModel
+import com.musicmuse.app.models.PlaylistViewModel
+import com.musicmuse.app.models.SearchViewModel
 import com.musicmuse.app.ui.nav.AppNavGraph
 import com.musicmuse.app.ui.nav.ExploreNavGraph
-import com.musicmuse.app.ui.screens.*
+import com.musicmuse.app.ui.screens.Category
+import com.musicmuse.app.ui.screens.Explore
+import com.musicmuse.app.ui.screens.Playlist
+import com.musicmuse.app.ui.screens.Search
 
 
 fun NavGraphBuilder.ExploreGraph(navController: NavController) {

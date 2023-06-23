@@ -10,45 +10,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.musicmuse.app.LocalActivity
-import com.musicmuse.app.api.SpotifyApiService
-import com.musicmuse.app.api.models.SpotifyPlaylistResponse
 import com.musicmuse.app.api.models.SpotifyTrack
+import com.musicmuse.app.models.PlaylistViewModel
 import com.musicmuse.app.ui.components.*
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-
-class PlaylistViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-  private val playlistId: String = checkNotNull(savedStateHandle["playlistId"])
-
-  private val _playlist = mutableStateOf<SpotifyPlaylistResponse?>(null)
-  val playlist get() = _playlist.value
-
-  var errorMessage: String by mutableStateOf("")
-
-  fun getPlaylist() {
-    viewModelScope.launch {
-      try {
-        val resp = SpotifyApiService().api.getPlaylist(playlistId)
-        _playlist.value = resp
-      } catch (e: Exception) {
-        e.printStackTrace()
-        if (e is HttpException) {
-          println(e.response()?.errorBody()?.string())
-        }
-        errorMessage = e.message.toString()
-      }
-    }
-  }
-}
 
 @Composable
 fun Playlist(playlistViewModel: PlaylistViewModel) {

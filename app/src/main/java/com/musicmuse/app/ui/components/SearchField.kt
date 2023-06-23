@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import com.musicmuse.app.ui.screens.SearchViewModel
+import com.musicmuse.app.models.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
