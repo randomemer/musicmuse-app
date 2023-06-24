@@ -2,23 +2,17 @@
 
 package com.musicmuse.app.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.musicmuse.app.models.CategoryViewModel
 import com.musicmuse.app.ui.components.*
 
@@ -31,27 +25,16 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
   }
 
   val playlists = viewModel.playlists?.items
-  val appBarImagePainter = rememberAsyncImagePainter(
-    viewModel.category.icons.first().href,
-    contentScale = ContentScale.FillBounds
-  )
-  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-    rememberTopAppBarState()
-  )
-
+  val category = viewModel.category
 
   Scaffold(
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
-      LargeTopAppBar(
-        modifier = Modifier.paint(appBarImagePainter),
-        scrollBehavior = scrollBehavior,
+      TopAppBar(
         navigationIcon = { NavBackButton(navController) },
         title = {
           Text(
-            viewModel.category.name,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            category.name,
+            style = MaterialTheme.typography.titleLarge,
           )
         })
     }) { paddingValues ->
@@ -67,6 +50,16 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
               bottom = 24.dp + TrackPlayerHeight
             )
           ) {
+            item {
+              Box(Modifier.padding(bottom = 24.dp).fillMaxWidth()) {
+                AsyncImage(
+                  model = category.icons.first().href,
+                  contentDescription = category.name,
+                  modifier = Modifier.size(256.dp).align(Alignment.Center)
+                )
+              }
+            }
+
             items(playlists) {
               PlaylistItem(it, navController)
             }

@@ -63,7 +63,7 @@ fun NavGraphBuilder.ExploreGraph(navController: NavController) {
       }
       val playlistViewModel: PlaylistViewModel = viewModel(parentEntry)
 
-      Playlist(playlistViewModel)
+      Playlist(playlistViewModel, navController)
     }
   }
 }

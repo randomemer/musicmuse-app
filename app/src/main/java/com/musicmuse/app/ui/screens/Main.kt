@@ -27,8 +27,7 @@ fun Main() {
   val navController = rememberNavController()
 
   AppTheme {
-    // TODO : Change to != null
-    if (viewModel.currentUser == null) {
+    if (viewModel.currentUser != null) {
       Scaffold(
         bottomBar = { BottomNav(navController) },
         content = { paddingValues ->

@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,12 +73,18 @@ fun Auth(viewModel: AuthViewModel) {
           )
         }
 
+
+
         Column(
           Modifier.fillMaxWidth(),
           verticalArrangement = Arrangement.spacedBy(9.dp)
         ) {
           Button(
             modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+              contentColor = Color.Black,
+              containerColor = Color.White
+            ),
             shape = RoundedCornerShape(100),
             onClick = {
               val gso =
@@ -86,14 +93,17 @@ fun Auth(viewModel: AuthViewModel) {
               val client = GoogleSignIn.getClient(context, gso)
               launcher.launch(client.signInIntent)
             }) {
-            Text("Sign In With Google", fontWeight = FontWeight.Bold)
-          }
-
-          Button(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(100),
-            onClick = {}) {
-            Text("Login With Facebook", fontWeight = FontWeight.Bold)
+            Row(
+              horizontalArrangement = Arrangement.spacedBy(12.dp),
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Image(
+                painterResource(R.drawable.google),
+                "Google logo",
+                modifier = Modifier.size(24.dp)
+              )
+              Text("Sign In With Google", fontWeight = FontWeight.Bold)
+            }
           }
         }
       }
