@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -32,11 +33,12 @@ class MainActivity : AppCompatActivity() {
     installSplashScreen()
     supportActionBar?.hide()
 
+    getSpotifyToken()
+    FirebaseApp.initializeApp(this)
+    auth = Firebase.auth;
+
     GlobalData.put("client_id", getString(R.string.spotify_client_id))
     GlobalData.put("client_secret", getString(R.string.spotify_client_secret))
-
-    getSpotifyToken()
-    auth = Firebase.auth;
 
     setContent {
       CompositionLocalProvider(LocalActivity provides this@MainActivity) {

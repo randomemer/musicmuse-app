@@ -86,7 +86,7 @@ val TrackPlayerHeight = 64.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TrackPlayer() {
+fun TrackPlayer(modifier: Modifier = Modifier) {
   val context = LocalContext.current
   val viewModel: TrackPlayerViewModel = viewModel(LocalActivity.current)
   val track = viewModel.track
@@ -108,7 +108,7 @@ fun TrackPlayer() {
 
   AnimatedVisibility(
     visible = (track != null),
-    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
+    modifier = modifier.padding(vertical = 12.dp, horizontal = 16.dp)
   ) {
     Card(
       shape = RoundedCornerShape(5.dp),

@@ -5,7 +5,6 @@ package com.musicmuse.app.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,7 +15,7 @@ import com.musicmuse.app.models.SearchViewModel
 import com.musicmuse.app.ui.components.*
 import com.musicmuse.app.ui.config.primary
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Search(viewModel: SearchViewModel, navController: NavController) {
   Scaffold(topBar = {

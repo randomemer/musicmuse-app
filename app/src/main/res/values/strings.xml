@@ -1,5 +1,9 @@
 <resources>
   <string name="app_name" translatable="false">Music Muse</string>
-  <string name="spotify_client_id" translatable="false">963e8aa28daa4e0cb3442b21c5624a19</string>
-  <string name="spotify_client_secret" translatable="false">9c9edefce41a4d7c8282fbd9faf057a3</string>
+  <string name="spotify_client_id" translatable="false">
+    963e8aa28daa4e0cb3442b21c5624a19
+  </string>
+  <string name="spotify_client_secret" translatable="false">
+    9c9edefce41a4d7c8282fbd9faf057a3
+  </string>
 </resources>
