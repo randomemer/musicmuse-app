@@ -26,6 +26,10 @@ data class NavGraphItem(
 
 object HomeNavGraph {
   val root = NavGraphItem("home_main")
+  val playlist = NavGraphItem(
+    "home_playlist/{playlistId}",
+    listOf(navArgument("playlistId") { type = NavType.StringType })
+  )
 }
 
 object ExploreNavGraph {

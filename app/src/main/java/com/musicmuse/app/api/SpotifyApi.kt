@@ -35,4 +35,9 @@ interface SpotifyApi {
     @Query("type") type: String = "track,playlist",
     @Query("limit") limit: Int = 50
   ): SpotifySearchResponse
+
+  @GET("browse/featured-playlists")
+  suspend fun getFeaturedPlaylists(
+    @Query("limit") limit: Int = 50
+  ): SpotifyFeaturedPlaylistsResponse
 }

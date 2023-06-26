@@ -26,3 +26,8 @@ data class SpotifyPlaylistResponse(
   @Json(name = "name") val name: String,
   @Json(name = "tracks") val tracks: SpotifyPaginatedModel<SpotifyPlaylistTrack>
 )
+
+data class SpotifyFeaturedPlaylistsResponse(
+  @Json(name = "message") val message: String?,
+  @Json(name = "playlists") val playlists: SpotifyPaginatedModel<SpotifySimplifiedPlaylist>
+)
