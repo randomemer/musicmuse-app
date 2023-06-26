@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.musicmuse.app.models.SearchViewModel
 import com.musicmuse.app.ui.components.*
 import com.musicmuse.app.ui.config.primary
+import com.musicmuse.app.utils.AsyncState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,59 +25,69 @@ fun Search(viewModel: SearchViewModel, navController: NavController) {
       navigationIcon = { NavBackButton(navController) })
   }) { paddingValues ->
     Box(Modifier.padding(paddingValues)) {
-      if (viewModel.isSearching) Loading()
-      else if (viewModel.errorMessage.isNotEmpty()) ErrorComponent(viewModel.errorMessage)
-      else if (viewModel.results != null) {
-        Column(Modifier.fillMaxSize()) {
-          // Chips
-          Row(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(9.dp)
-          ) {
-            FilterChip(
-              label = { Text("Tracks") },
-              selected = (viewModel.filter == "tracks"),
-              colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = primary,
-                selectedLabelColor = Color.Black
-              ),
-              onClick = { viewModel.filter = "tracks" }
-            )
+      when (viewModel.status) {
+        AsyncState.Idle -> SearchIdle()
 
-            FilterChip(
-              label = { Text("Playlists") },
-              selected = (viewModel.filter == "playlists"),
-              colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = primary,
-                selectedLabelColor = Color.Black
-              ),
-              onClick = { viewModel.filter = "playlists" }
-            )
-          }
+        AsyncState.Pending -> Loading()
 
-          // Search Results
-          LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(9.dp),
-            contentPadding = PaddingValues(
-              start = 24.dp,
-              top = 12.dp,
-              end = 24.dp,
-              bottom = 24.dp + TrackPlayerHeight
-            )
-          ) {
-            if (viewModel.filter == "tracks") {
-              items(viewModel.results!!.tracks.items) { track -> TrackItem(track) }
+        AsyncState.Rejected -> ErrorComponent(viewModel.errorMessage)
+
+        AsyncState.Resolved -> {
+          Column(Modifier.fillMaxSize()) {
+            // Chips
+            Row(
+              modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+              horizontalArrangement = Arrangement.spacedBy(9.dp)
+            ) {
+              FilterChip(
+                label = { Text("Tracks") },
+                selected = (viewModel.filter == "tracks"),
+                colors = FilterChipDefaults.filterChipColors(
+                  selectedContainerColor = primary,
+                  selectedLabelColor = Color.Black
+                ),
+                onClick = { viewModel.filter = "tracks" }
+              )
+
+              FilterChip(
+                label = { Text("Playlists") },
+                selected = (viewModel.filter == "playlists"),
+                colors = FilterChipDefaults.filterChipColors(
+                  selectedContainerColor = primary,
+                  selectedLabelColor = Color.Black
+                ),
+                onClick = { viewModel.filter = "playlists" }
+              )
             }
-            if (viewModel.filter == "playlists") {
-              items(viewModel.results!!.playlists.items) { playlist ->
-                PlaylistItem(
-                  playlist, navController
-                )
+
+            // Search Results
+            LazyColumn(
+              verticalArrangement = Arrangement.spacedBy(9.dp),
+              contentPadding = PaddingValues(
+                start = 24.dp,
+                top = 12.dp,
+                end = 24.dp,
+                bottom = 24.dp + TrackPlayerHeight
+              )
+            ) {
+              if (viewModel.filter == "tracks") {
+                items(viewModel.results!!.tracks.items) { track ->
+                  TrackItem(
+                    track
+                  )
+                }
+              }
+              if (viewModel.filter == "playlists") {
+                items(viewModel.results!!.playlists.items) { playlist ->
+                  PlaylistItem(
+                    playlist, navController
+                  )
+                }
               }
             }
           }
         }
-      } else SearchIdle()
+      }
     }
   }
 }

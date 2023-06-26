@@ -20,6 +20,7 @@ import com.musicmuse.app.LocalActivity
 import com.musicmuse.app.api.models.SpotifyTrack
 import com.musicmuse.app.models.PlaylistViewModel
 import com.musicmuse.app.ui.components.*
+import com.musicmuse.app.utils.AsyncState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,11 +37,14 @@ fun Playlist(
   val playlist = playlistViewModel.playlist
   val tracks = playlist?.tracks
 
-  if (playlistViewModel.errorMessage.isEmpty()) {
-    // when loading
-    if (playlist == null) Loading()
-    // when loaded
-    else {
+  when (playlistViewModel.status) {
+    AsyncState.Pending -> Loading()
+
+    AsyncState.Rejected -> ErrorComponent(playlistViewModel.errorMessage)
+
+    AsyncState.Resolved -> {
+      playlist!!
+
       Scaffold(topBar = {
         TopAppBar(
           navigationIcon = { NavBackButton(navController) },
@@ -90,9 +94,7 @@ fun Playlist(
         }
       }
     }
-  }
-  // when error
-  else {
-    ErrorComponent(playlistViewModel.errorMessage)
+
+    AsyncState.Idle -> {}
   }
 }

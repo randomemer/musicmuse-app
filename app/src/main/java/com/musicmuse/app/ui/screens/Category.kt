@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.musicmuse.app.models.CategoryViewModel
 import com.musicmuse.app.ui.components.*
+import com.musicmuse.app.utils.AsyncState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,8 +40,12 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
         })
     }) { paddingValues ->
     Box(Modifier.padding(paddingValues)) {
-      if (viewModel.errorMessage.isEmpty()) {
-        if (playlists != null) {
+      when (viewModel.status) {
+        AsyncState.Pending -> Loading()
+
+        AsyncState.Rejected -> ErrorComponent(viewModel.errorMessage)
+
+        AsyncState.Resolved -> {
           LazyColumn(
             verticalArrangement = Arrangement.spacedBy(9.dp),
             contentPadding = PaddingValues(
@@ -60,15 +65,13 @@ fun Category(viewModel: CategoryViewModel, navController: NavController) {
               }
             }
 
-            items(playlists) {
+            items(playlists!!) {
               PlaylistItem(it, navController)
             }
           }
-        } else {
-          Loading()
         }
-      } else {
-        ErrorComponent(viewModel.errorMessage)
+
+        AsyncState.Idle -> {}
       }
     }
   }

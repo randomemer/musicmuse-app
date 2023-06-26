@@ -18,6 +18,7 @@ import com.musicmuse.app.R
 import com.musicmuse.app.models.AuthViewModel
 import com.musicmuse.app.models.MainViewModel
 import com.musicmuse.app.ui.components.BottomNav
+import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.TrackPlayer
 import com.musicmuse.app.ui.config.AppTheme
@@ -52,6 +53,8 @@ fun Main() {
 
                 TrackPlayer(Modifier.align(Alignment.BottomCenter))
               }
+
+              AsyncState.Rejected -> ErrorComponent(viewModel.tokenErrorMessage)
 
               else -> {}
             }

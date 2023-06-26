@@ -28,6 +28,7 @@ import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.TrackPlayerHeight
 import com.musicmuse.app.ui.nav.ExploreNavGraph
+import com.musicmuse.app.utils.AsyncState
 import com.musicmuse.app.utils.GlobalData
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,9 +77,12 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
     }
 
 
-    if (viewModel.errorMessage.isEmpty()) {
-      if (categories == null) Loading()
-      else {
+    when (viewModel.status) {
+      AsyncState.Pending -> Loading()
+
+      AsyncState.Rejected -> ErrorComponent(viewModel.errorMessage)
+
+      AsyncState.Resolved -> {
         LazyVerticalGrid(
           columns = GridCells.Adaptive(minSize = 156.dp),
           verticalArrangement = Arrangement.spacedBy(18.dp),
@@ -90,10 +94,10 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
             bottom = 24.dp + TrackPlayerHeight
           )
         ) {
-          items(categories) {
+          items(categories!!) {
             Card(
               shape = RoundedCornerShape(5.dp),
-              modifier = Modifier.clickable(true, onClick = {
+              modifier = Modifier.size(156.dp).clickable(true, onClick = {
                 GlobalData.put(it.id, it)
                 navController.navigate("explore_category/${it.id}")
               })
@@ -108,8 +112,8 @@ fun Explore(viewModel: ExploreViewModel, navController: NavController) {
           }
         }
       }
-    } else {
-      ErrorComponent(viewModel.errorMessage)
+
+      AsyncState.Idle -> {}
     }
   }
 }

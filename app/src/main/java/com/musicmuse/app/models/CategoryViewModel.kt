@@ -10,6 +10,7 @@ import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategory
 import com.musicmuse.app.api.models.SpotifyPaginatedModel
 import com.musicmuse.app.api.models.SpotifySimplifiedPlaylist
+import com.musicmuse.app.utils.AsyncState
 import com.musicmuse.app.utils.GlobalData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -22,20 +23,23 @@ class CategoryViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
   val playlists get() = _playlists.value
   val category: SpotifyCategory get() = GlobalData.get(categoryId)
 
+  var status by mutableStateOf(AsyncState.Idle)
   var errorMessage: String by mutableStateOf("")
-
 
   fun getCategoryPlaylists() {
     viewModelScope.launch {
+      status = AsyncState.Pending
       try {
         val resp = SpotifyApiService().api.getCategoryPlaylists(categoryId)
         _playlists.value = resp.playlists
+        status = AsyncState.Resolved
       } catch (e: Exception) {
         e.printStackTrace()
         if (e is HttpException) {
           println(e.response()?.errorBody()?.string())
         }
         errorMessage = e.message.toString()
+        status = AsyncState.Rejected
       }
     }
   }

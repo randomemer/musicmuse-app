@@ -26,7 +26,10 @@ import com.musicmuse.app.models.MainViewModel
 import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
 import com.musicmuse.app.ui.components.TrackPlayerHeight
+import com.musicmuse.app.utils.AsyncState
 import com.musicmuse.app.utils.GlobalData
+import com.musicmuse.app.utils.welcomeMessage
+import java.util.*
 
 @Composable
 fun Home(viewModel: HomeViewModel, navController: NavController) {
@@ -34,6 +37,7 @@ fun Home(viewModel: HomeViewModel, navController: NavController) {
     viewModel.getFeaturedPlaylists()
   }
 
+  val rightNow = Calendar.getInstance()
   val mainViewModel: MainViewModel = viewModel(LocalActivity.current)
   val user = mainViewModel.currentUser
 
@@ -43,15 +47,18 @@ fun Home(viewModel: HomeViewModel, navController: NavController) {
       verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
       Text(
-        "Good Morning, ${user?.displayName}",
+        "${welcomeMessage(rightNow.get(Calendar.HOUR_OF_DAY))}, ${user?.displayName}",
         style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
       )
     }
 
-    if (viewModel.errorMessage.isEmpty()) {
-      if (viewModel.results == null) Loading()
-      else {
+    when (viewModel.status) {
+      AsyncState.Pending -> Loading()
+
+      AsyncState.Rejected -> ErrorComponent(viewModel.errorMessage)
+
+      AsyncState.Resolved -> {
         LazyVerticalGrid(
           columns = GridCells.Adaptive(minSize = 156.dp),
           verticalArrangement = Arrangement.spacedBy(18.dp),
@@ -66,7 +73,7 @@ fun Home(viewModel: HomeViewModel, navController: NavController) {
           items(viewModel.results!!.playlists.items) {
             Card(
               shape = RoundedCornerShape(5.dp),
-              modifier = Modifier.clickable(true, onClick = {
+              modifier = Modifier.size(156.dp).clickable(true, onClick = {
                 GlobalData.put(it.id, it)
                 navController.navigate("home_playlist/${it.id}")
               })
@@ -81,8 +88,8 @@ fun Home(viewModel: HomeViewModel, navController: NavController) {
           }
         }
       }
-    } else {
-      ErrorComponent(viewModel.errorMessage)
+
+      AsyncState.Idle -> {}
     }
   }
 }

@@ -8,11 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.musicmuse.app.api.SpotifyApiService
 import com.musicmuse.app.api.models.SpotifyCategoriesResponse
 import com.musicmuse.app.api.models.SpotifyCategory
+import com.musicmuse.app.utils.AsyncState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ExploreViewModel : ViewModel() {
   private var _categories: List<SpotifyCategory>? by mutableStateOf(null)
+  var status by mutableStateOf(AsyncState.Idle)
   var errorMessage by mutableStateOf("")
 
   val categories get() = _categories
@@ -20,6 +22,7 @@ class ExploreViewModel : ViewModel() {
 
   fun getCategories() {
     viewModelScope.launch {
+      status = AsyncState.Pending
       try {
         var resp: SpotifyCategoriesResponse
         val items = mutableListOf<SpotifyCategory>()
@@ -32,12 +35,14 @@ class ExploreViewModel : ViewModel() {
         } while (resp.categories.next != null)
 
         _categories = items
+        status = AsyncState.Resolved
       } catch (e: Exception) {
         e.printStackTrace()
         if (e is HttpException) {
           println(e.response()?.errorBody()?.string())
         }
         errorMessage = e.message.toString()
+        status = AsyncState.Rejected
       }
     }
   }
