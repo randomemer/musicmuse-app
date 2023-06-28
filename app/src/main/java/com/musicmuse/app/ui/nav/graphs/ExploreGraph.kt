@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.musicmuse.app.models.CategoryViewModel
-import com.musicmuse.app.models.ExploreViewModel
 import com.musicmuse.app.models.PlaylistViewModel
 import com.musicmuse.app.models.SearchViewModel
 import com.musicmuse.app.ui.nav.AppNavGraph
@@ -25,10 +24,8 @@ fun NavGraphBuilder.ExploreGraph(navController: NavController) {
     route = AppNavGraph.Explore.route,
     startDestination = ExploreNavGraph.root.route
   ) {
-    val exploreViewModel = ExploreViewModel()
-
     composable(route = ExploreNavGraph.root.route) {
-      Explore(exploreViewModel, navController)
+      Explore(navController)
     }
 
     composable(route = ExploreNavGraph.search.route) {

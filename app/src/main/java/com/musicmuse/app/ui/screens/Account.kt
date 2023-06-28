@@ -24,7 +24,9 @@ import com.musicmuse.app.models.MainViewModel
 @Composable
 fun Account() {
   val mainViewModel: MainViewModel = viewModel(LocalActivity.current)
-  val user = mainViewModel.currentUser ?: return
+  val googleData =
+    mainViewModel.currentUser?.providerData?.find { it.providerId == "google.com" }
+      ?: return
 
   Column(
     Modifier.fillMaxSize().padding(24.dp),
@@ -36,16 +38,16 @@ fun Account() {
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       AsyncImage(
-        user.photoUrl,
-        user.displayName,
+        googleData.photoUrl,
+        googleData.displayName,
         modifier = Modifier.size(156.dp).clip(RoundedCornerShape(100))
       )
       Text(
-        "${user?.displayName}",
+        "${googleData.displayName}",
         style = MaterialTheme.typography.headlineLarge,
         fontWeight = FontWeight.Bold
       )
-      Text("${user.email}", style = MaterialTheme.typography.bodyMedium)
+      Text("${googleData.email}", style = MaterialTheme.typography.bodyMedium)
     }
 
     Button(onClick = {

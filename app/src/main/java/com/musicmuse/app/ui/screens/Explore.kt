@@ -21,8 +21,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.musicmuse.app.LocalActivity
 import com.musicmuse.app.models.ExploreViewModel
 import com.musicmuse.app.ui.components.ErrorComponent
 import com.musicmuse.app.ui.components.Loading
@@ -33,7 +35,9 @@ import com.musicmuse.app.utils.GlobalData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Explore(viewModel: ExploreViewModel, navController: NavController) {
+fun Explore(navController: NavController) {
+  val viewModel: ExploreViewModel = viewModel(LocalActivity.current)
+
   LaunchedEffect(Unit) {
     viewModel.getCategories()
   }

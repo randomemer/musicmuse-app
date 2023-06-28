@@ -34,6 +34,7 @@ fun SearchField(viewModel: SearchViewModel) {
       viewModel.search()
     }),
     onValueChange = { viewModel.searchValue = it },
+    textStyle = MaterialTheme.typography.bodyLarge,
     colors = TextFieldDefaults.textFieldColors(
       containerColor = Color.Transparent,
       focusedIndicatorColor = Color.Transparent,
